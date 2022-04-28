@@ -1,5 +1,5 @@
-const leitorCSV = require("../helpers/leitorCSV");
-const formataTamanhoArquivoEmMB = require('../helpers/utils')
+const { leitorCSV } = require("../helpers/leitorCSV");
+const { formataTamanhoArquivoEmMB } = require("../helpers/utils");
 
 class TransacaoController {
   static async index(_req, res) {
@@ -15,6 +15,15 @@ class TransacaoController {
       if (!req.hasOwnProperty("file")) {
         throw new Error("Arquivo Inválido");
       }
+      console.log(req.file);
+      if (
+        !req.file.hasOwnProperty("mimetype") ||
+        req.file.mimetype != "text/csv"
+      ) {
+        throw new Error("Arquivo deve ser CSV");
+      }
+
+      leitorCSV(req.file.path);
 
       return res.status(200).json({
         nome: req.file.originalname,
@@ -24,7 +33,6 @@ class TransacaoController {
       return res.status(500).json(error.message);
     }
   }
- 
 }
 
 module.exports = TransacaoController;
